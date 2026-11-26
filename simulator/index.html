@@ -1,22 +1,61 @@
 <!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>HYDROSENSE IoT Simulator</title>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HYDROSENSE | Dashboard Simulasi</title>
 <style>
-:root{font-family:Inter,system-ui,Arial;color:#17352d;background:#f2f7f4}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1050px;margin:auto;padding:28px}.hero{background:#123d32;color:white;padding:28px;border-radius:18px}.hero p{color:#d4e9df}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0}.card{background:white;border:1px solid #dce9e1;border-radius:14px;padding:18px;box-shadow:0 4px 18px #17352d0c}.label{color:#60796e;font-size:14px}.value{font-size:32px;font-weight:750;margin:10px 0}.unit{font-size:14px;color:#60796e}.controls{display:flex;gap:10px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:11px 16px;background:#176c50;color:white;font-weight:650;cursor:pointer}button.secondary{background:#e4eee8;color:#17352d}.status{font-weight:700}.note{color:#65786f;font-size:13px;line-height:1.6}
-</style></head><body><main class="wrap">
-<section class="hero"><h1>🌱 HYDROSENSE</h1><p>Simulator dashboard pemantauan hidroponik berbasis IoT — data di bawah adalah simulasi, bukan pembacaan sensor nyata.</p><div class="status" id="connection">● SIMULASI AKTIF</div></section>
+:root{font-family:Inter,system-ui,Arial,sans-serif;color:#18372f;background:#f3f7f4}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1120px;margin:auto;padding:24px}.hero{background:linear-gradient(120deg,#123d32,#247653);color:#fff;padding:28px;border-radius:18px}.hero p{color:#d6eadf;max-width:760px;line-height:1.6}.tag{display:inline-block;padding:6px 10px;border-radius:20px;background:#e6f5eb;color:#17613f;font-size:12px;font-weight:800}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:18px 0}.card{background:#fff;border:1px solid #dce9e1;border-radius:14px;padding:18px;box-shadow:0 4px 18px #17352d0b}.label{color:#61786d;font-size:13px}.value{font-size:32px;font-weight:800;margin:10px 0}.unit{font-size:13px;color:#70847a}.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:12px 0}.controls{display:flex;gap:8px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:10px 14px;background:#176c50;color:white;font-weight:700;cursor:pointer}button.alt{background:#e5eee8;color:#1b4537}button.danger{background:#a43b36}input[type=range]{width:100%;accent-color:#176c50}select{padding:8px;border:1px solid #cddbd2;border-radius:8px}.state{font-weight:800}.ok{color:#167347}.warn{color:#a76511}.bad{color:#b33333}.small{font-size:12px;color:#6b7e74;line-height:1.6}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:9px;border-bottom:1px solid #e7eee9;text-align:left}canvas{width:100%;height:160px;background:#fbfdfb;border-radius:10px}.links a{color:#176c50;font-weight:700;text-decoration:none;margin-right:14px}@media(max-width:760px){.layout{grid-template-columns:1fr}.wrap{padding:14px}.hero{padding:22px}}
+</style></head>
+<body><main class="wrap">
+<section class="hero"><span class="tag">MODE: SIMULASI TANPA HARDWARE</span><h1>🌱 HYDROSENSE IoT</h1><p>Dashboard uji coba sistem pemantauan hidroponik berbasis ESP32. Ubah nilai sensor virtual, amati status kondisi nutrisi, dan uji kendali aktuator. Semua angka pada halaman ini adalah data sintetis untuk pengujian antarmuka dan logika, bukan hasil pengukuran tanaman atau sensor nyata.</p><div class="state" id="connection">● SIMULASI BERJALAN</div></section>
 <section class="grid">
-<div class="card"><div class="label">pH larutan</div><div class="value" id="ph">6.1</div><div class="unit">pH (simulasi)</div></div>
-<div class="card"><div class="label">TDS</div><div class="value" id="tds">850</div><div class="unit">ppm (simulasi)</div></div>
-<div class="card"><div class="label">Suhu air</div><div class="value" id="temp">25.4</div><div class="unit">°C (simulasi)</div></div>
-<div class="card"><div class="label">Level air</div><div class="value" id="level">Normal</div><div class="unit">status simulasi</div></div>
+<div class="card"><div class="label">pH larutan nutrisi</div><div class="value" id="phVal">6.00</div><div class="unit">pH · rentang contoh 0–14</div><div id="phStatus" class="state ok">Normal (contoh)</div></div>
+<div class="card"><div class="label">Total Dissolved Solids</div><div class="value" id="tdsVal">850</div><div class="unit">ppm · nilai simulasi</div><div id="tdsStatus" class="state ok">Dalam rentang demo</div></div>
+<div class="card"><div class="label">Suhu larutan</div><div class="value" id="tempVal">24.0</div><div class="unit">°C · nilai simulasi</div><div id="tempStatus" class="state ok">Pantau berkala</div></div>
+<div class="card"><div class="label">Ketinggian air</div><div class="value" id="levelVal">75</div><div class="unit">% · nilai simulasi</div><div id="levelStatus" class="state ok">Air cukup</div></div>
 </section>
-<section class="card"><h2>Kendali aktuator (simulasi)</h2><p>Pompa: <b id="pumpState">OFF</b> · Lampu: <b id="lightState">OFF</b></p><div class="controls"><button onclick="toggle('pump')">Pompa ON/OFF</button><button onclick="toggle('light')">Lampu ON/OFF</button><button class="secondary" onclick="auto=!auto;document.getElementById('mode').textContent=auto?'Otomatis':'Manual'">Ubah mode</button></div><p>Mode: <b id="mode">Manual</b></p><p class="note">Tombol hanya mengubah tampilan simulator; tidak mengirim perintah ke perangkat fisik.</p></section>
-<p class="note">Untuk menghubungkan perangkat nyata, konfigurasi firmware ESP32 dan dashboard Blynk sesuai dokumentasi repository.</p>
-</main><script>
-let pump=false,light=false,auto=false;
-function toggle(k){if(k==='pump')pump=!pump;else light=!light;render()}
-function render(){document.getElementById('pumpState').textContent=pump?'ON':'OFF';document.getElementById('lightState').textContent=light?'ON':'OFF'}
-function sample(){document.getElementById('ph').textContent=(5.8+Math.random()*.6).toFixed(2);document.getElementById('tds').textContent=Math.round(780+Math.random()*140);document.getElementById('temp').textContent=(24.5+Math.random()*2).toFixed(1)}
-setInterval(sample,2500);render();
+<div class="layout">
+<section class="card"><h2>Panel input sensor virtual</h2>
+<label>pH: <b id="phInput">6.00</b></label><input id="ph" type="range" min="0" max="14" step=".01" value="6">
+<label>TDS (ppm): <b id="tdsInput">850</b></label><input id="tds" type="range" min="0" max="2000" step="10" value="850">
+<label>Suhu larutan (°C): <b id="tempInput">24</b></label><input id="temp" type="range" min="10" max="40" step=".1" value="24">
+<label>Ketinggian air (%): <b id="levelInput">75</b></label><input id="level" type="range" min="0" max="100" step="1" value="75">
+<div class="controls" style="margin-top:16px"><button onclick="randomize()">Acak data sensor</button><button class="alt" onclick="resetValues()">Reset nilai</button><button class="alt" onclick="exportCSV()">Ekspor log CSV</button></div>
+<p class="small">Rentang status pada dashboard merupakan ambang demonstrasi yang dapat diubah sesuai jenis tanaman dan rekomendasi agronomi. Jangan gunakan angka ini sebagai setpoint budidaya tanpa validasi.</p>
+</section>
+<section class="card"><h2>Kendali aktuator virtual</h2>
+<div class="row"><span>Mode operasi</span><select id="mode" onchange="applyMode()"><option value="manual">Manual</option><option value="auto">Otomatis (aturan demo)</option></select></div>
+<div class="row"><span>Pompa nutrisi</span><b id="pumpState" class="state">OFF</b></div><div class="controls"><button onclick="setActuator('pump',true)">Pompa ON</button><button class="danger" onclick="setActuator('pump',false)">Pompa OFF</button></div>
+<div class="row"><span>Lampu tanam</span><b id="lightState" class="state">OFF</b></div><div class="controls"><button onclick="setActuator('light',true)">Lampu ON</button><button class="danger" onclick="setActuator('light',false)">Lampu OFF</button></div>
+<hr style="border:0;border-top:1px solid #e6eee8;margin:18px 0"><h3 id="alertTitle">Status sistem: Normal</h3><p id="alertText" class="small">Tidak ada kondisi peringatan pada data demo.</p>
+<p class="small">Aktuator hanya divisualisasikan di browser. Tidak ada pompa/lampu fisik yang dikendalikan.</p></section>
+</div>
+<section class="card" style="margin-top:16px"><div class="row"><h2>Riwayat pembacaan simulasi</h2><span class="small" id="lastUpdate">Menunggu data…</span></div><canvas id="chart" width="1000" height="160"></canvas><table><thead><tr><th>Waktu</th><th>pH</th><th>TDS (ppm)</th><th>Suhu (°C)</th><th>Air (%)</th><th>Pompa</th></tr></thead><tbody id="log"></tbody></table></section>
+<section class="card links" style="margin-top:16px"><h3>Dokumentasi dan pengujian lanjutan</h3><a href="https://github.com/mbul92529-alt/HYDROSENSE-IoT" target="_blank" rel="noopener">Repository GitHub</a><a href="https://wokwi.com/" target="_blank" rel="noopener">Wokwi ESP32</a><a href="https://blynk.cloud/" target="_blank" rel="noopener">Blynk Cloud</a><p class="small">Untuk simulasi firmware ESP32, gunakan folder <b>wokwi</b> di repository. Untuk koneksi Blynk, isi kredensial milik akun sendiri di lingkungan uji; jangan unggah token ke repository publik.</p></section>
+<footer class="small" style="padding:18px 2px">HYDROSENSE · Prototipe antarmuka untuk tugas Pengantar Rekayasa dan Desain · Data sintetis, bukan alat ukur terkalibrasi.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);let pump=false,light=false,history=[];
+function values(){return {ph:+$('ph').value,tds:+$('tds').value,temp:+$('temp').value,level:+$('level').value}}
+function status(id,text,cls){$(id).textContent=text;$(id).className='state '+cls}
+function update(){
+ const v=values();$('phVal').textContent=v.ph.toFixed(2);$('tdsVal').textContent=v.tds;$('tempVal').textContent=v.temp.toFixed(1);$('levelVal').textContent=v.level;
+ $('phInput').textContent=v.ph.toFixed(2);$('tdsInput').textContent=v.tds;$('tempInput').textContent=v.temp.toFixed(1);$('levelInput').textContent=v.level;
+ status('phStatus',v.ph<5.5||v.ph>6.8?'Di luar rentang demo':'Dalam rentang demo',v.ph<5.5||v.ph>6.8?'warn':'ok');
+ status('tdsStatus',v.tds<500||v.tds>1200?'Periksa TDS':'Dalam rentang demo',v.tds<500||v.tds>1200?'warn':'ok');
+ status('tempStatus',v.temp>28?'Suhu tinggi (demo)':'Pantau berkala',v.temp>28?'warn':'ok');
+ status('levelStatus',v.level<25?'Air rendah — peringatan':'Air cukup',v.level<25?'bad':'ok');
+ if($('mode').value==='auto'){pump=v.level<35;light=v.temp>30?false:true}
+ $('pumpState').textContent=pump?'ON':'OFF';$('lightState').textContent=light?'ON':'OFF';
+ $('alertTitle').textContent=(v.level<25||v.ph<5.5||v.ph>6.8||v.tds<500||v.tds>1200)?'Status sistem: Perlu pemeriksaan':'Status sistem: Normal (demo)';
+ $('alertText').textContent=v.level<25?'Level air rendah. Periksa reservoir sebelum mengaktifkan pompa.':'Periksa nilai sensor dan bandingkan dengan spesifikasi budidaya yang dipilih.';
+}
+function setActuator(k,on){if($('mode').value==='auto'){$('mode').value='manual'}if(k==='pump')pump=on;else light=on;update()}
+function applyMode(){update()}
+function randomize(){ $('ph').value=(5+Math.random()*3).toFixed(2);$('tds').value=Math.round(300+Math.random()*1400);$('temp').value=(18+Math.random()*16).toFixed(1);$('level').value=Math.round(Math.random()*100);update();record()}
+function resetValues(){$('ph').value=6;$('tds').value=850;$('temp').value=24;$('level').value=75;pump=false;light=false;$('mode').value='manual';update();record()}
+function record(){let v=values(),d=new Date();history.unshift({time:d.toLocaleTimeString('id-ID'),...v,pump:pump?'ON':'OFF'});history=history.slice(0,20);$('lastUpdate').textContent='Pembaruan: '+d.toLocaleString('id-ID');$('log').innerHTML=history.map(x=>'<tr><td>'+x.time+'</td><td>'+x.ph.toFixed(2)+'</td><td>'+x.tds+'</td><td>'+x.temp.toFixed(1)+'</td><td>'+x.level+'</td><td>'+x.pump+'</td></tr>').join('');draw()}
+function draw(){let c=$('chart'),ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.strokeStyle='#dce8df';for(let y=20;y<160;y+=35){ctx.beginPath();ctx.moveTo(30,y);ctx.lineTo(980,y);ctx.stroke()}if(history.length<2)return;ctx.strokeStyle='#16734b';ctx.lineWidth=3;ctx.beginPath();history.slice().reverse().forEach((x,i)=>{let px=35+i*(930/(history.length-1)),py=145-(x.ph/14)*120;i?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke();ctx.fillStyle='#61786d';ctx.font='12px sans-serif';ctx.fillText('Tren pH (skala 0–14)',35,14)}
+function exportCSV(){let rows=[['waktu','pH','TDS_ppm','suhu_C','level_air_persen','pompa'],...history.map(x=>[x.time,x.ph,x.tds,x.temp,x.level,x.pump])];let csv=rows.map(r=>r.join(',')).join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='hydrosense-log-simulasi.csv';a.click();URL.revokeObjectURL(a.href)}
+['ph','tds','temp','level'].forEach(id=>$(id).addEventListener('input',()=>{update();record()}));update();record();setInterval(()=>{if($('mode').value==='auto')update()},3000);
 </script></body></html>
