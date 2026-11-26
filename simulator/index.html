@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HYDROSENSE IoT Simulator</title>
+<style>
+:root{font-family:Inter,system-ui,Arial;color:#17352d;background:#f2f7f4}*{box-sizing:border-box}body{margin:0}.wrap{max-width:1050px;margin:auto;padding:28px}.hero{background:#123d32;color:white;padding:28px;border-radius:18px}.hero p{color:#d4e9df}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:20px 0}.card{background:white;border:1px solid #dce9e1;border-radius:14px;padding:18px;box-shadow:0 4px 18px #17352d0c}.label{color:#60796e;font-size:14px}.value{font-size:32px;font-weight:750;margin:10px 0}.unit{font-size:14px;color:#60796e}.controls{display:flex;gap:10px;flex-wrap:wrap}button{border:0;border-radius:9px;padding:11px 16px;background:#176c50;color:white;font-weight:650;cursor:pointer}button.secondary{background:#e4eee8;color:#17352d}.status{font-weight:700}.note{color:#65786f;font-size:13px;line-height:1.6}
+</style></head><body><main class="wrap">
+<section class="hero"><h1>🌱 HYDROSENSE</h1><p>Simulator dashboard pemantauan hidroponik berbasis IoT — data di bawah adalah simulasi, bukan pembacaan sensor nyata.</p><div class="status" id="connection">● SIMULASI AKTIF</div></section>
+<section class="grid">
+<div class="card"><div class="label">pH larutan</div><div class="value" id="ph">6.1</div><div class="unit">pH (simulasi)</div></div>
+<div class="card"><div class="label">TDS</div><div class="value" id="tds">850</div><div class="unit">ppm (simulasi)</div></div>
+<div class="card"><div class="label">Suhu air</div><div class="value" id="temp">25.4</div><div class="unit">°C (simulasi)</div></div>
+<div class="card"><div class="label">Level air</div><div class="value" id="level">Normal</div><div class="unit">status simulasi</div></div>
+</section>
+<section class="card"><h2>Kendali aktuator (simulasi)</h2><p>Pompa: <b id="pumpState">OFF</b> · Lampu: <b id="lightState">OFF</b></p><div class="controls"><button onclick="toggle('pump')">Pompa ON/OFF</button><button onclick="toggle('light')">Lampu ON/OFF</button><button class="secondary" onclick="auto=!auto;document.getElementById('mode').textContent=auto?'Otomatis':'Manual'">Ubah mode</button></div><p>Mode: <b id="mode">Manual</b></p><p class="note">Tombol hanya mengubah tampilan simulator; tidak mengirim perintah ke perangkat fisik.</p></section>
+<p class="note">Untuk menghubungkan perangkat nyata, konfigurasi firmware ESP32 dan dashboard Blynk sesuai dokumentasi repository.</p>
+</main><script>
+let pump=false,light=false,auto=false;
+function toggle(k){if(k==='pump')pump=!pump;else light=!light;render()}
+function render(){document.getElementById('pumpState').textContent=pump?'ON':'OFF';document.getElementById('lightState').textContent=light?'ON':'OFF'}
+function sample(){document.getElementById('ph').textContent=(5.8+Math.random()*.6).toFixed(2);document.getElementById('tds').textContent=Math.round(780+Math.random()*140);document.getElementById('temp').textContent=(24.5+Math.random()*2).toFixed(1)}
+setInterval(sample,2500);render();
+</script></body></html>
